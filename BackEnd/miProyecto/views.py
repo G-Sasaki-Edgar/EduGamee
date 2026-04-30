@@ -13,6 +13,7 @@ from .serializers import (
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
+from django.conf import settings
 
 
 
@@ -223,6 +224,8 @@ def ranking(request):
         # Usar first_name si existe, si no usar username
         nombre = perfil.usuario.first_name or perfil.usuario.username
         
+        
+    
         ranking_data.append({
             'posicion': idx,
             'nombre_jugador': nombre,
@@ -230,9 +233,9 @@ def ranking(request):
             'rol': perfil.rol,
             'xp_total': perfil.xp_total,
             'nivel_actual': perfil.nivel_actual,
-            'avatar': perfil.avatar
+            'avatar': perfil.avatar,
+            'avatar_url': f"{settings.S3_BASE_URL}/avatares/Docente.jpg" if perfil.rol == 'docente' else f"{settings.S3_BASE_URL}/avatares/Alumno.jpg"
         })
-    
     return Response(ranking_data)
 
 @api_view(['POST'])
