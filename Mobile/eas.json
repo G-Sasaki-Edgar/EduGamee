@@ -9,12 +9,10 @@
       "distribution": "internal"
     },
     "preview": {
-      "distribution": "internal",
-      "projectRoot": "Mobile"
+      "distribution": "internal"
     },
     "production": {
-      "autoIncrement": true,
-      "projectRoot": "Mobile"
+      "autoIncrement": true
     }
   },
   "submit": {
