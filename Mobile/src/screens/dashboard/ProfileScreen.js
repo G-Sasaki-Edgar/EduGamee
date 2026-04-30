@@ -62,16 +62,23 @@ const PerfilUsuario = ({ navigation }) => {
     }
   };
 
-  const handleLogout = async () => {
-    const confirmed = window.confirm('¿Estás seguro que querés cerrar sesión?');
-    if (confirmed) {
-      await logout();
-      navigation.getParent()?.reset({
-        index: 0,
-        routes: [{ name: 'Login' }],
-      });
-    }
-  };
+   const handleLogout = () => {
+  Alert.alert(
+    'Cerrar Sesión',
+    '¿Estás seguro que querés cerrar sesión?',
+    [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Cerrar Sesión',
+        style: 'destructive',
+            onPress: async () => {
+        await logout();
+        navigation.navigate('Login');
+      }
+      }
+    ]
+  );
+};
 
   if (isLoading && !userProfile) {
     return (
@@ -82,9 +89,8 @@ const PerfilUsuario = ({ navigation }) => {
     );
   }
 
-    const { usuario, rol, xp_total = 0, nivel_actual = 1 } = userProfile || {};
-    const avatar = { uri: 'https://edugamefy-media.s3.us-east-1.amazonaws.com/avatares/Docente.jpg' };
-
+  const { usuario, rol, xp_total = 0, nivel_actual = 1 } = userProfile || {};
+const avatar = { uri: 'https://edugamefy-media.s3.us-east-1.amazonaws.com/avatares/Docente.jpg' };
   const { porcentaje, faltante } = calcularProgreso(xp_total, nivel_actual);
   const nivelInfo = getNivelLabel(nivel_actual);
   const iniciales = usuario?.username?.slice(0, 2).toUpperCase() || 'U';

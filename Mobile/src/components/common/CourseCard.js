@@ -21,10 +21,7 @@ const CourseCard = ({ level, xpAvailable, title, subtitle, progress, gradientCol
         <Text style={styles.subtitle}>{subtitle}</Text>
 
         {/* Barra de Progreso */}
-        <View style={styles.progressContainer}>
-          <Text style={styles.progressLabel}>Progreso</Text>
-          <Text style={styles.percentText}>{progress}%</Text>
-        </View>
+        
         <View style={styles.progressBarBg}>
           <View
             style={[

@@ -101,7 +101,7 @@ const StudentDashboard = ({ navigation }) => {
               subtitle={curso.descripcion || 'Sin descripción'}
               progress={curso.progreso ?? 0}
               gradientColors={getGradient(curso.color_tema)} // ← fix ✅
-              onPress={() => navigation.navigate('DetalleCurso', { cursoId: curso.id })}
+              onPress={() => navigation.navigate('Mistareas', { cursoId: curso.id })}
             />
           ))
         )}

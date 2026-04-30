@@ -89,7 +89,7 @@ export default function DocenteDashboard({ navigation }) {
                 progress={curso.progreso ?? 0}
                 gradientColors={getGradient(curso.color_tema)}
                 onPress={() =>
-                  navigation.navigate('DetalleCurso', {
+                  navigation.navigate('RevisionDocente', {
                     cursoId: curso.codigo_acceso,
                   })
                 }
@@ -115,13 +115,7 @@ export default function DocenteDashboard({ navigation }) {
             <Text style={styles.actionText}>Gestionar Tareas</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.actionCard}
-            onPress={() => navigation.navigate('Alumnos')}
-          >
-            <Ionicons name="people-outline" size={24} color="#F59E0B" />
-            <Text style={styles.actionText}>Ver Alumnos</Text>
-          </TouchableOpacity>
+          
         </View>
       </ScrollView>
     </View>

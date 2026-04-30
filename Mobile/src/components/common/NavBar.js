@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, TextInput, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, TextInput, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from '../../constants/Config';
-import NotifToast from './NotifToast'; // ← importar
+import NotifToast from './NotifToast';
 
 const WS_HOST = API_URL
   .replace('http://', '')
@@ -12,12 +12,15 @@ const WS_HOST = API_URL
   .replace('/api', '');
 const WS_PROTOCOL = API_URL.startsWith('https') ? 'wss' : 'ws';
 
+const S3_URL = 'https://edugamefy-media.s3.us-east-1.amazonaws.com/avatares';
+
 export default function Navbar({ role = "estudiante" }) {
   const navigation = useNavigation();
   const [query, setQuery] = useState('');
   const [user, setUser] = useState(null);
+  const [avatarUrl, setAvatarUrl] = useState(null);
   const [notifCount, setNotifCount] = useState(0);
-  const [toastNotif, setToastNotif] = useState(null); // ← nuevo
+  const [toastNotif, setToastNotif] = useState(null);
   const ws = useRef(null);
 
   useEffect(() => {
@@ -30,6 +33,19 @@ export default function Navbar({ role = "estudiante" }) {
     try {
       const userData = await AsyncStorage.getItem('user');
       if (userData) setUser(JSON.parse(userData));
+
+      const token = await AsyncStorage.getItem('token');
+      if (token) {
+        const response = await fetch(`${API_URL}/perfil/`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await response.json();
+        if (data.rol === 'docente') {
+          setAvatarUrl(`${S3_URL}/Docente.jpg`);
+        } else {
+          setAvatarUrl(`${S3_URL}/Alumno.jpg`);
+        }
+      }
     } catch (error) {
       console.error('Error loading user data:', error);
     }
@@ -50,7 +66,7 @@ export default function Navbar({ role = "estudiante" }) {
         const data = JSON.parse(e.data);
         if (data.tipo === 'nueva_tarea') {
           setNotifCount(prev => prev + 1);
-          setToastNotif(data); // ← mostrar toast
+          setToastNotif(data);
         }
       };
 
@@ -72,13 +88,25 @@ export default function Navbar({ role = "estudiante" }) {
   };
 
   const handleToastPress = (notif) => {
-    // Navega a Mistareas con el id de la tarea
     navigation.navigate('Mistareas', { tarea_id: notif.tarea_id });
   };
 
+  const AvatarCircle = () => (
+    <TouchableOpacity onPress={() => navigation.navigate(role === "docente" ? "Profile" : "Perfil")}>
+      <View style={styles.avatar}>
+        {avatarUrl ? (
+          <Image source={{ uri: avatarUrl }} style={styles.avatarImage} />
+        ) : (
+          <Text style={styles.avatarText}>
+            {user ? user.username.charAt(0).toUpperCase() : 'U'}
+          </Text>
+        )}
+      </View>
+    </TouchableOpacity>
+  );
+
   return (
     <View style={styles.navWrapper}>
-      {/* Toast de notificación */}
       <NotifToast
         notif={toastNotif}
         onClose={() => setToastNotif(null)}
@@ -128,23 +156,7 @@ export default function Navbar({ role = "estudiante" }) {
             </TouchableOpacity>
           )}
 
-          {role === "docente" ? (
-            <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-              <View style={styles.avatar}>
-                <Text style={styles.avatarText}>
-                  {user ? user.username.charAt(0).toUpperCase() : 'U'}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity onPress={() => navigation.navigate('Perfil')}>
-              <View style={styles.avatar}>
-                <Text style={styles.avatarText}>
-                  {user ? user.username.charAt(0).toUpperCase() : 'U'}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          )}
+          <AvatarCircle />
         </View>
       </View>
     </View>
@@ -193,9 +205,18 @@ const styles = StyleSheet.create({
   },
   badgeText: { color: '#fff', fontSize: 9, fontWeight: '700' },
   avatar: { 
-    width: 35, height: 35, borderRadius: 18, 
+    width: 35, 
+    height: 35, 
+    borderRadius: 18, 
     backgroundColor: '#8B5CF6', 
-    justifyContent: 'center', alignItems: 'center',
+    justifyContent: 'center', 
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
+  avatarImage: { 
+    width: 35, 
+    height: 35, 
+    borderRadius: 18,
   },
   avatarText: { color: '#fff', fontWeight: 'bold', fontSize: 12 },
 });

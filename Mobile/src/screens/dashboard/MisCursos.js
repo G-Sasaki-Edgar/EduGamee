@@ -19,6 +19,32 @@ export default function MisCursos({ navigation }) {
   const [cursos, setCursos] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const eliminarCurso = async (cursoId) => {
+  Alert.alert(
+    'Eliminar Curso',
+    '¿Estás seguro que querés eliminar este curso? Esta acción no se puede deshacer.',
+    [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Eliminar',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            const token = await AsyncStorage.getItem('token');
+            const response = await fetch(`${API_URL}/cursos/${cursoId}/`, {
+              method: 'DELETE',
+              headers: { Authorization: `Bearer ${token}` }
+            });
+            if (!response.ok) throw new Error('Error al eliminar');
+            setCursos(prev => prev.filter(c => c.id !== cursoId));
+          } catch (err) {
+            Alert.alert('Error', 'No se pudo eliminar el curso');
+          }
+        }
+      }
+    ]
+  );
+};
   useFocusEffect(
     React.useCallback(() => {
       const fetchCursosConTareas = async () => {
@@ -82,12 +108,19 @@ export default function MisCursos({ navigation }) {
             <Text style={styles.cursoCode}>Código: {curso.codigo_acceso}</Text>
           </View>
         </View>
-        <TouchableOpacity
-          style={styles.addTaskButton}
-          onPress={() => navigation.navigate('TareasDocente', { cursoId: curso.id })}
-        >
-          <Ionicons name="add-circle-outline" size={20} color="#4F46E5" />
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.addTaskButton}
+            onPress={() => navigation.navigate('TareasDocente', { cursoId: curso.id })}
+          >
+            <Ionicons name="add-circle-outline" size={20} color="#4F46E5" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.addTaskButton}
+            onPress={() => eliminarCurso(curso.id)}
+          >
+            <Ionicons name="trash-outline" size={20} color="#EF4444" />
+          </TouchableOpacity>
       </View>
 
       {curso.descripcion && (

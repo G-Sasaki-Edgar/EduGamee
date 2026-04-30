@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, ActivityIndicator, StyleSheet,
-  FlatList, SafeAreaView, Animated
+  FlatList, SafeAreaView, Animated, Image
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../constants/theme';
@@ -45,8 +45,8 @@ const theme = PODIUM_COLORS[item.posicion] || PODIUM_COLORS[1];
       <View style={styles.podiumLeft}>
         {/* Avatar */}
         <View style={[styles.podiumAvatar, { backgroundColor: getAvatarColor(item.nombre_jugador) }]}>
-          <Text style={styles.podiumAvatarText}>{getInitials(item.nombre_jugador)}</Text>
-        </View>
+        <Image source={{ uri: 'https://edugamefy-media.s3.us-east-1.amazonaws.com/avatares/Alumno.jpg' }} style={{ width: 52, height: 52, borderRadius: 26 }} />
+      </View>
         {/* Posición */}
         <View style={[styles.posBadge, { backgroundColor: theme.border }]}>
           <Text style={styles.posBadgeText}>#{item.posicion}</Text>
@@ -87,7 +87,7 @@ const RankingRow = ({ item, index }) => {
       <Text style={styles.rankPos}>#{item.posicion}</Text>
 
       <View style={[styles.rowAvatar, { backgroundColor: avatarColor }]}>
-        <Text style={styles.rowAvatarText}>{getInitials(item.nombre_jugador)}</Text>
+        <Image source={{ uri: 'https://edugamefy-media.s3.us-east-1.amazonaws.com/avatares/Alumno.jpg' }} style={{ width: 40, height: 40, borderRadius: 20 }} />
       </View>
 
       <View style={styles.rowInfo}>
